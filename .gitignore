@@ -5,6 +5,7 @@
 *.db-wal
 *.pyc
 ._*
+.DS_Store
 __pycache__
 
 # Directory (contents) ignores
