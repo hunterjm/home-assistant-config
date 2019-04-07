@@ -1,0 +1,17 @@
+# HomeKit
+homekit:
+  auto_start: false
+  filter:
+    include_domains:
+      - light
+      - climate
+      - media_player
+      - switch
+      - cover
+  entity_config:
+    media_player.living_room_xbox:
+      feature_list:
+        - feature: on_off
+    media_player.master_bedroom_xbox:
+      feature_list:
+        - feature: on_off

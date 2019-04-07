@@ -1,0 +1,33 @@
+title: Lights
+path: lights
+icon: mdi:lightbulb-on
+cards:
+  - type: entities
+    title: Downstairs Lights
+    entities:
+      - entity: switch.foyer_light
+        icon: mdi:lightbulb
+      - entity: switch.art_room_light
+        icon: mdi:lightbulb
+      - light.living_room_fan
+      - entity: switch.kitchen_light
+        icon: mdi:lightbulb
+      - entity: switch.breakfast_nook_light
+        icon: mdi:lightbulb
+      - entity: switch.downstairs_hallway_light
+        icon: mdi:lightbulb
+      - entity: switch.garage_light
+        icon: mdi:lightbulb
+  - type: entities
+    title: Upstairs Lights
+    entities:
+      - entity: switch.front_staircase_light
+        icon: mdi:lightbulb
+      - entity: switch.master_bedroom_light
+        icon: mdi:lightbulb
+      - entity: switch.upstairs_hallway_light
+        icon: mdi:lightbulb
+      - entity: switch.bonus_room_light
+        icon: mdi:lightbulb
+      - entity: switch.back_staircase_light
+        icon: mdi:lightbulb

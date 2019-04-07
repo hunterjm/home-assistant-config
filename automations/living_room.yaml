@@ -1,0 +1,29 @@
+- id: livingroom-triple-tap-switch-down
+  alias: "Triple Tap Living Room Switch Down"
+  trigger:
+  - platform: event
+    event_type: zwave.scene_activated
+    event_data:
+      entity_id: zwave.living_room_wall_dimmer
+      scene_id: 2
+      scene_data: 7920
+  action:
+    - service: light.turn_off
+      entity_id: light.living_room_fan
+    - service: media_player.turn_off
+      entity_id: media_player.living_room_xbox
+
+- id: livingroom-triple-tap-switch-up
+  alias: "Triple Tap Living Room Switch Up"
+  trigger:
+  - platform: event
+    event_type: zwave.scene_activated
+    event_data:
+      entity_id: zwave.living_room_wall_dimmer
+      scene_id: 1
+      scene_data: 7920
+  action:
+    - service: light.turn_on
+      entity_id: light.living_room_fan
+    - service: media_player.turn_on
+      entity_id: media_player.living_room_xbox

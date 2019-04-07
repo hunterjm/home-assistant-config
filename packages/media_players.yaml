@@ -1,0 +1,23 @@
+# Media Players
+media_player:
+  - platform: xboxone
+    device: !secret xbox1_id
+    ip_address: !secret xbox1_ip
+    name: Master Bedroom Xbox
+    authentication: false
+  - platform: xboxone
+    device: !secret xbox2_id
+    ip_address: !secret xbox2_ip
+    name: Living Room Xbox
+    authentication: false
+  - platform: androidtv
+    host: !secret living_room_tv_ip
+    name: "Sony Bravia"
+    adb_server_ip: 127.0.0.1
+    adb_server_port: 5037
+
+alexa_media:
+  accounts:
+    - email: !secret amazon_email
+      password: !secret amazon_password
+      url: "amazon.com"

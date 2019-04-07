@@ -1,0 +1,13 @@
+title: Network
+path: network
+icon: mdi:lan
+cards:
+  - type: history-graph
+    entities:
+      - entity: sensor.speedtest_download
+        name: Download Speed
+      - entity: sensor.speedtest_upload
+        name: Upload Speed
+      - entity: sensor.speedtest_ping
+        name: Ping
+    hours_to_show: 168

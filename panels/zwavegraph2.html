@@ -1,0 +1,296 @@
+<dom-module id='ha-panel-zwavegraph2'>
+    <template>
+      <style include="ha-style">
+        .node.Layer1 > rect, .node.Layer1 > circle
+        {
+          fill: lightblue;
+        } 
+  
+        .node.Layer2 > rect, .node.Layer2 > circle
+        {
+          fill: yellow;
+        }
+  
+        .node.Layer3 > rect, .node.Layer3 > circle
+        {
+          fill: green;
+        }
+  
+        .node.Layer4 > rect, .node.Layer4 > circle
+        {
+          fill: orange;
+        }
+  
+        .node.Layer5 > rect, .node.Layer5 > circle
+        {
+          fill: grey;
+        }
+  
+        .node.Error > rect, .node.Error > circle
+        {
+          fill: red;
+        }
+  
+        .node.unset > rect, .node.unset > circle
+        {
+          fill: white;
+        }
+  
+        .node > rect, .node > circle
+        {
+          stroke: black;
+        }
+  
+        .node text
+        {
+          font-size: 12px;
+        }
+  
+        .edgePath path {
+          stroke: #333;
+          fill: #333;
+          stroke-width: 1.5px;
+        }
+  
+      </style>
+  
+      <app-header-layout has-scrolling-region>
+        <app-header slot="header" fixed>
+          <app-toolbar>
+            <ha-menu-button narrow='[[narrow]]' show-menu='[[showMenu]]'></ha-menu-button>
+            <div main-title>Zwave Graph</div>
+          </app-toolbar>
+        </app-header>
+  
+        <div class="content">
+          <svg id="svg"></svg>
+        </div>
+      </app-header-layout>
+  
+    </template>
+  
+  </dom-module>
+  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.js"></script>
+  <script>
+  class HaPanelZWave extends Polymer.Element {
+    static get is() { return 'ha-panel-zwavegraph2'; }
+  
+    static get properties() {
+      return {
+        // Home Assistant object
+        hass: Object,
+        // If should render in narrow mode
+        narrow: {
+          type: Boolean,
+          value: false,
+        },
+        // If sidebar is currently shown
+        showMenu: {
+          type: Boolean,
+          value: false,
+        },
+        // Home Assistant panel info99
+        // panel.config contains config passed to register_panel serverside
+        panel: Object,
+      };
+    }
+  
+  
+    ready() {
+      super.ready();
+  
+      var data=this.listNodes(this.hass);
+  
+  
+      var g = new dagreD3.graphlib.Graph().setGraph({});
+      g.graph().rankDir="BT";
+      g.graph().nodeSep=15;
+  
+      for (var i = 0; i < data["nodes"].length; i++) {
+        var node=data["nodes"][i];
+        g.setNode(node.id, node);
+      }
+  
+      for (var i =0; i< data["edges"].length; i++)
+      {
+        g.setEdge(data["edges"][i].from, data["edges"][i].to, {label:"", arrowhead: "undirected"})
+      }
+  
+      // Create the renderer
+      var render = new dagreD3.render();
+  
+      var svg=d3.select(this.$.svg);
+      var inner = svg.append("g").attr("transform", "translate(20,120)scale(1)");
+  
+      g.graph().minlen = 0;
+  
+      // Run the renderer. This is what draws the final graph.
+      render(inner, g);
+  
+  
+      // Add the title element to be used for a tooltip (SVG functionality)
+      inner.selectAll("g.node")
+          .append("title").html(function(d) {return g.node(d).title;});
+      svg.attr('height', g.graph().height + 140);
+      svg.attr('width', g.graph().width + 140);
+  
+      var legends=[{shape: "rect", color:"lightblue", text:"Hub"},
+                   {shape: "rect", color:"yellow", text:"1 hop"},
+                   {shape: "rect", color:"green", text:"2 hops"},
+                   {shape: "rect", color:"orange", text:"3 hops"},
+                   {shape: "rect", color:"grey", text:"4 hops"},
+                   {shape: "rect", color:"red", text:"Failed Node"},
+                   {shape: "rect", color:"white", text:"Unconnected"}];
+  
+      this.addLegend(svg, legends, 5, 20);
+  
+  
+      legends = [{shape: "circle", text: "Mains power", color: "black"},
+                 {shape: "rect", text: "Battery power", color: "black"}]
+      
+      this.addLegend(svg, legends, 5 + g.graph().width/4, 20)
+  
+  
+  
+    }
+  
+    addLegend(svg, legends, startX, startY)
+    {
+      for(var counter=0;counter < legends.length;counter++)
+      {
+        if (legends[counter].shape == "circle")
+        {
+          svg.append(legends[counter].shape)
+            .attr('cx', startX + 5 )
+            .attr('cy',startY + 5 + 20 * counter)
+            .attr('r', 5)
+            .style("stroke", "black")
+            .style("fill", legends[counter].color);
+        }
+        else
+        {
+          svg.append(legends[counter].shape)
+            .attr('x',startX)
+            .attr('y',startY + 20 * counter)
+            .attr('width', 10)
+            .attr('height', 10)
+            .style("stroke", "black")
+            .style("fill", legends[counter].color);
+        }
+        svg.append('text')
+          .attr("x", startX + 20)
+          .attr("y", startY + 10 + 20*counter)
+          .text(legends[counter].text)
+          .attr("class", "textselected")
+          .style("text-anchor", "start")
+          .style("font-size", 15);
+  
+      }
+  
+    }
+  
+    listNodes(hass) {
+      let states=new Array();
+      for (let state in hass.states)
+      {
+        states.push({name:state, entity:hass.states[state]});
+      }
+      let zwaves = states.filter((s) => {return s.name.indexOf("zwave.") ==0});
+      let result= {"edges":[], "nodes":[]};
+  
+      let hubNode=0;
+      let neighbours={};
+  
+      for (let b in zwaves)
+      {
+         let id=zwaves[b].entity.attributes["node_id"]; 
+         let node = zwaves[b].entity;
+         if (node.attributes["capabilities"].filter(
+              (s) => {return s =="primaryController"}).length > 0) 
+         {
+           hubNode=id;
+         }
+         neighbours[id]=node.attributes['neighbors'];
+  
+         let entities = states.filter((s) => {
+                      return ((s.name.indexOf("zwave.") == -1) &&
+                              (s.entity.attributes["node_id"] == id)) });
+         let batlev=node.attributes.battery_level;
+         let name = `${(node.attributes["friendly_name"] || node.attributes["product_name"])}`;
+         let entity={"id":  id,
+                     "label": (name + " (" + node.attributes["averageResponseRTT"]+"ms)").replace(/ /g, "\n"),
+                     "class": "unset",
+                     "shape": batlev != undefined ? "rect" : "circle",
+                     "title": "<b>"+node.attributes["node_name"]+"</b>" +
+                              "<br />Node: " + id + (node.attributes["is_zwave_plus"] ? "+" : "") +
+                              "<br />Product Name: " + node.attributes["product_name"] +
+                              "<br />Average Request RTT: " + node.attributes["averageResponseRTT"]+"ms" + 
+                              "<br />Power source: " + (batlev != undefined ? "battery (" + batlev +"%)" : "mains") +
+                              "<br />" + entities.length + " entities",
+                     "forwards": (node.attributes.is_awake && node.attributes.is_ready && !node.attributes.is_failed &&
+                                  node.attributes.capabilities.includes("listening"))
+                    };
+  
+         if (node.attributes["is_failed"])
+         {
+           entity.label = "FAILED: "+entity.label;
+           entity["font.multi"]=true;
+           entity["title"]="<b>FAILED: </b>"+entity.title;
+           entity["group"]="Failed";
+         }
+  
+         if (hubNode == id)
+         {
+           entity.label="ZWave Hub";
+           entity.borderWidth= 2;
+           entity.fixed=true;
+         }
+  
+         result.nodes.push(entity);
+      }
+  
+      
+      if (hubNode > 0)
+      {
+        let layer=0;
+        let previousRow=[hubNode];
+        let mappedNodes=[hubNode];
+        while (previousRow.length > 0)
+        {
+          layer = layer+1;
+          let nextRow=[];
+          for (let target in previousRow)
+          {
+            result.nodes.filter((n) => {return ((n.id ==previousRow[target]) && (n.group="unset"))})
+                        .every((d) => {d.class="Layer" + layer;})
+  
+            if (result.nodes.filter((n) => {return ((n.id == previousRow[target]) && (n.forwards))}).length > 0)
+            {
+              let row=neighbours[previousRow[target]];
+              for (let node in row)
+              {
+  
+                if (!mappedNodes.includes(row[node]))
+                {
+                  result.edges.push({"from":row[node], "to":previousRow[target]});
+                  nextRow.push(row[node]);
+                }
+              }
+            }
+          }
+  
+          for (let idx in nextRow)
+          {
+            mappedNodes.push(nextRow[idx]);
+          }
+          previousRow = nextRow;
+        }
+      }
+      return result;
+     }
+  
+  
+  }
+  customElements.define(HaPanelZWave.is, HaPanelZWave);
+  </script>

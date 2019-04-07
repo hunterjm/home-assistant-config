@@ -1,0 +1,4 @@
+# Master Bed
+sleepiq:
+  username: !secret email
+  password: !secret sleepiq_password

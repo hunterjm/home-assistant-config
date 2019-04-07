@@ -1,0 +1,45 @@
+title: Cameras
+path: cameras
+icon: mdi:cctv
+cards:
+  - type: picture-glance
+    title: Front Door
+    camera_image: camera.front_door
+    entities:
+      - binary_sensor.front_door
+      - binary_sensor.front_door_motion
+      - binary_sensor.front_door_person_detection
+      - binary_sensor.front_door_sound_detection
+  - type: picture-glance
+    title: Foyer
+    camera_image: camera.foyer
+    entities:
+      - binary_sensor.front_door
+      - binary_sensor.foyer_field_detection
+  - type: picture-glance
+    title: Backyard
+    camera_image: camera.backyard
+    entities:
+      - binary_sensor.back_door
+      - binary_sensor.backyard_line_crossing
+      - binary_sensor.backyard_field_detection
+  - type: picture-glance
+    title: Driveway
+    camera_image: camera.driveway
+    entities:
+      - binary_sensor.driveway_line_crossing
+      - binary_sensor.driveway_field_detection
+  - type: picture-glance
+    title: Garage
+    camera_image: camera.garage
+    entities:
+      - binary_sensor.garage_door
+      - binary_sensor.garage_line_crossing
+      - binary_sensor.garage_field_detection
+  - type: entities
+    title: Object Detection
+    entities:
+      - image_processing.tensorflow_foyer
+      - image_processing.tensorflow_backyard
+      - image_processing.tensorflow_driveway
+      - image_processing.tensorflow_garage

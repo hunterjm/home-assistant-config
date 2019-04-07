@@ -1,0 +1,33 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret latitude
+  longitude: !secret longitude
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: !secret elevation
+  # metric for Metric, imperial for Imperial
+  unit_system: imperial
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: America/New_York
+  packages: !include_dir_named packages
+  whitelist_external_dirs:
+    - /config/www/motion
+    - /share/camera
+    - /share/videos
+
+# Enables the frontend
+frontend:
+  javascript_version: latest
+  themes: !include_dir_named themes
+
+# Lovelace
+lovelace:
+  mode: yaml
+
+# Text to speech
+tts:
+  - platform: google
+
+automation: !include_dir_merge_list automations
+script: !include_dir_merge_named scripts

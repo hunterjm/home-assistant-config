@@ -1,0 +1,33 @@
+title: Overview
+path: overview
+icon: mdi:information-outline
+cards:
+  - type: vertical-stack
+    cards:
+      - !include presence-card.yaml
+      - type: custom:monster-card
+        show_empty: false
+        card:
+          type: entities
+          title: Lights On
+        filter:
+          include:
+            - domain: light
+              state: 'on'
+            - domain: switch
+              entity_id: "switch.*_light*"
+              state: 'on'
+              options:
+                icon: mdi:lightbulb
+      - type: entities
+        title: Climate Control
+        entities:
+          - climate.downstairs
+          - climate.upstairs
+          - fan.dyson_fan
+          - climate.dyson_fan
+      - type: entities
+        title: Garage
+        entities:
+          - cover.large_garage_door
+          - cover.small_garage_door

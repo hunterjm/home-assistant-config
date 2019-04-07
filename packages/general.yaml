@@ -1,0 +1,79 @@
+hassio:
+
+# Enables configuration UI
+config:
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.16.0.0/12
+
+cloudflare:
+  email: !secret email
+  api_key: !secret cloudflare_api_key
+  zone: !secret domain
+  records:
+    - !secret cloudflare_record
+
+# Cloud
+#cloud:
+
+# Enable API
+api:
+
+# Enable Alexa Smart Home
+alexa:
+  smart_home:
+    filter:
+      exclude_entities:
+        - climate.upstairs
+        - climate.downstairs
+        - media_player.everywhere
+        - media_player.kitchen_echo
+        - media_player.master_bedroom_dot
+        - media_player.bonus_room_dot
+        - media_player.REDACTED_dot
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+  ignore:
+    - google_cast
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+logger:
+  default: warning
+  logs:
+    homeassistant.components.stream: info
+    homeassistant.components.media_player.xboxone: info
+    libav: warning
+
+recorder:
+  db_url: !secret mysql_hass_url
+  purge_keep_days: 1095
+  purge_interval: 0
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+panel_custom:
+  - name: zwavegraph2
+    sidebar_title: ZWave Graph2
+    sidebar_icon: mdi:access-point-network
+    url_path: zwave

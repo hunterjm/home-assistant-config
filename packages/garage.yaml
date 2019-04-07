@@ -1,0 +1,6 @@
+# MyQ
+cover:
+  - platform: myq
+    username: !secret email
+    password: !secret myq_password
+    type: chamberlain

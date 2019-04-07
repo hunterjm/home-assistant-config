@@ -1,0 +1,50 @@
+title: Media
+path: media
+icon: mdi:youtube-tv
+cards:
+  - type: vertical-stack
+    cards:
+      - type: entities
+        title: Xbox
+        entities:
+        - entity: media_player.living_room_xbox
+          type: "custom:mini-media-player"
+          icon: "mdi:xbox"
+          group: true
+          power_color: true
+          show_source: true
+          volume_stateless: true
+        - entity: media_player.master_bedroom_xbox
+          type: "custom:mini-media-player"
+          icon: "mdi:xbox"
+          group: true
+          power_color: true
+          show_source: true
+          volume_stateless: true
+      - type: entities
+        title: Alexa
+        entities:
+        - entity: media_player.kitchen_echo
+          type: "custom:mini-media-player"
+          icon: "mdi:amazon-alexa"
+          group: true
+          power_color: true
+          show_source: true
+        - entity: media_player.master_bedroom_dot
+          type: "custom:mini-media-player"
+          icon: "mdi:amazon-alexa"
+          group: true
+          power_color: true
+          show_source: true
+        - entity: media_player.bonus_room_dot
+          type: "custom:mini-media-player"
+          icon: "mdi:amazon-alexa"
+          group: true
+          power_color: true
+          show_source: true
+        - entity: media_player.REDACTED_dot
+          type: "custom:mini-media-player"
+          icon: "mdi:amazon-alexa"
+          group: true
+          power_color: true
+          show_source: true

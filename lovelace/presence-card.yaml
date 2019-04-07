@@ -1,0 +1,15 @@
+type: horizontal-stack
+cards:
+  - type: picture-entity
+    entity: sensor.USER1_presence
+    image: /local/USER1_cropped_away.jpg
+    state_image:
+      "Home": /local/USER1_cropped.jpg
+    show_name: false
+
+  - type: picture-entity
+    entity: sensor.USER2_presence
+    image: /local/USER2_cropped_away.jpg
+    state_image:
+      "Home": /local/USER2_cropped.jpg
+    show_name: false

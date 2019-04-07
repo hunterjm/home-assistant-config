@@ -1,0 +1,12 @@
+zone:
+  - name: Red Ventures
+    latitude: !secret latitude_rv
+    longitude: !secret longitude_rv
+    radius: 250
+    icon: mdi:office-building
+
+  - name: Library
+    latitude: !secret latitude_library
+    longitude: !secret longitude_library
+    radius: 250
+    icon: mdi:library

@@ -1,0 +1,5 @@
+# Duke Energy
+# sensor:
+#   - platform: duke_energy
+#     username: !secret email
+#     password: !secret duke_password

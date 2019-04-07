@@ -1,0 +1,10 @@
+# ios
+ios:
+
+# Notify
+notify:
+  - name: ios_jk_phones
+    platform: group
+    services:
+      - service: ios_USER1s_iphone
+      - service: ios_USER2s_iphone

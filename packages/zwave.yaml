@@ -1,0 +1,7 @@
+zwave:
+  usb_path: /dev/ttyACM0
+  network_key: !secret zwave_network_key
+  device_config:
+    light.living_room_fan:
+      refresh_value: true
+      delay: 1

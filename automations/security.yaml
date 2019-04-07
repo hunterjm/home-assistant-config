@@ -1,0 +1,68 @@
+- alias: Tensorflow Scan
+  trigger:
+     - platform: state
+       entity_id:
+         - binary_sensor.backyard_field_detection
+         - binary_sensor.driveway_field_detection
+         - binary_sensor.foyer_field_detection
+         - binary_sensor.garage_field_detection
+         - binary_sensor.backyard_line_crossing
+         - binary_sensor.driveway_line_crossing
+         - binary_sensor.garage_line_crossing
+  action:
+    - service: image_processing.scan
+      data_template:
+        entity_id: "image_processing.tensorflow_{{ trigger.entity_id.split('.')[1].split('_')[0] }}"
+
+- alias: Notify Motion
+  trigger:
+    - platform: numeric_state
+      entity_id:
+        - image_processing.tensorflow_backyard
+        - image_processing.tensorflow_driveway
+        - image_processing.tensorflow_foyer
+        - image_processing.tensorflow_garage
+      above: 0
+  action:
+    - service: camera.record
+      data_template:
+        entity_id: "camera.{{ trigger.entity_id.split('.')[1].split('_')[1] }}"
+        filename: "/share/videos/{{ trigger.entity_id.split('.')[1].split('_')[1] }}_{{ now().strftime('%Y%m%d_%H%M%S') }}.mp4"
+        duration: 20
+        lookback: 10
+    - condition: or
+      conditions:
+        - condition: template
+          value_template: "{{ not is_state('group.family_presence', 'home') }}"
+        - condition: template
+          value_template: >
+            {% for s in ['garage', 'foyer'] if s in 'image_processing.tensorflow_garage' %}
+              True
+            {% else %}
+              False
+            {% endfor %}
+    - service: notify.ios_jk_phones
+      data_template:
+        message: "{{ trigger.entity_id.split('.')[1].split('_')[1]|capitalize }} motion detected!"
+        data:
+          attachment:
+            url: 'https://REDACTED/local/motion/{{ trigger.entity_id.split(".")[1].split("_")[1] }}_latest.jpg'
+            content-type: jpeg
+            hide-thumbnail: true
+    - condition: and
+      conditions:
+        - condition: state
+          entity_id: input_boolean.voice_alerts
+          state: 'on'
+    - service: media_player.alexa_tts
+      data_template:
+        entity_id:
+          - media_player.kitchen_echo
+          - media_player.master_bedroom_dot
+          - media_player.bonus_room_dot
+        message: >
+          {% if is_state('group.family_presence', 'home') %}
+            You have a visitor in your {{ trigger.entity_id.split('.')[1].split('_')[1] }}.
+          {% else %}
+            Warning. Unknown presence detected. The authorities will be notified.
+          {% endif %}

@@ -1,0 +1,37 @@
+# Generic ignores
+*.log
+*.db
+*.db-shm
+*.db-wal
+*.pyc
+._*
+__pycache__
+
+# Directory (contents) ignores
+.cloud
+.storage
+deps
+tts
+tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28
+www
+
+# Specific file ignores
+.homekit.state
+.ios.conf
+.xbox-token.json
+.uuid
+alexa_media*.pickle
+ip_bans.yaml
+known_devices.yaml
+options.xml
+OZW_Log.txt
+pyozw.sqlite
+secrets.yaml
+zwcfg_*
+zwscene.xml
+
+# Ignore add-on files
+notebooks
+
+# Ignore files created by IDE's
+.vscode

@@ -1,0 +1,4 @@
+input_boolean:
+  show_security:
+    name: Show Security
+    initial: off

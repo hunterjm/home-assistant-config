@@ -1,0 +1,89 @@
+alarm_control_panel:
+  - platform: manual
+    name: "Alarm"
+    code: !secret alarm_code
+    pending_time: 60
+    trigger_time: 120
+    delay_time: 30
+    disarm_after_trigger: false
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      pending_time: 0
+      delay_time: 0
+
+konnected:
+  access_token: !secret konnected_access_token
+  devices:
+    - id: !secret konnected_mac
+      binary_sensors:
+        - pin: 1
+          type: door
+          name: Garage Door
+        - pin: 2
+          type: door
+          name: Back Door
+        - pin: 5
+          type: door
+          name: Front Door
+
+stream:
+
+camera:
+  - platform: generic
+    name: Garage
+    still_image_url: !secret garage_cam_img_url
+    stream_source: !secret garage_cam_url
+  - platform: generic
+    name: Foyer
+    still_image_url: !secret foyer_cam_img_url
+    stream_source: !secret foyer_cam_url
+  - platform: generic
+    name: Backyard
+    still_image_url: !secret backyard_cam_img_url
+    stream_source: !secret backyard_cam_url
+  - platform: generic
+    name: Driveway
+    still_image_url: !secret driveway_cam_img_url
+    stream_source: !secret driveway_cam_url
+
+binary_sensor:
+  - platform: hikvision
+    host: !secret garage_cam_ip
+    username: hass
+    password: !secret hass_user_pass
+  - platform: hikvision
+    host: !secret foyer_cam_ip
+    username: hass
+    password: !secret hass_user_pass
+  - platform: hikvision
+    host: !secret backyard_cam_ip
+    username: hass
+    password: !secret hass_user_pass
+  - platform: hikvision
+    host: !secret driveway_cam_ip
+    username: hass
+    password: !secret hass_user_pass
+
+image_processing:
+  - platform: tensorflow
+    confidence: 90
+    scan_interval: 10000
+    source:
+      - entity_id: camera.garage
+      - entity_id: camera.foyer
+      - entity_id: camera.backyard
+      - entity_id: camera.driveway
+    file_out:
+      - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
+      - "/share/camera/{{ camera_entity.split('.')[1] }}_{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+    model:
+      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      categories:
+        - person
+        - car
+
+input_boolean:
+  voice_alerts:
+    name: Voice Alerts
+    initial: off

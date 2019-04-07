@@ -1,0 +1,19 @@
+resources:
+  - url: !resource column-card/column-card.js
+    type: js
+  - url: !resource mini-media-player/mini-media-player.js
+    type: module
+  - url: !resource monster-card/monster-card.js
+    type: js
+  - url: !resource vertical-stack-in-card/vertical-stack-in-card.js
+    type: js
+
+title: Home
+
+views:
+  - !include 00_overview.yaml
+  - !include 10_lights.yaml
+  - !include 20_security.yaml
+  - !include 30_media.yaml
+  - !include 40_cameras.yaml
+  - !include 50_network.yaml

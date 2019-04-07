@@ -1,0 +1,107 @@
+##############################################################
+- alias: Garage Door Opened Hallway Light
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door
+      to: 'on'
+
+  condition:
+    - condition: state
+      entity_id: switch.downstairs_hallway_light
+      state: 'off'
+
+  action:
+    - service: switch.turn_on
+      entity_id: switch.downstairs_hallway_light
+
+##############################################################
+- alias: Garage Door Closed Hallway Light
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door
+      to: 'off'
+      for:
+        seconds: 30
+
+  condition:
+    - condition: state
+      entity_id: binary_sensor.garage_door
+      state: 'off'
+    - condition: state
+      entity_id: switch.downstairs_hallway_light
+      state: 'on'
+
+  action:
+    - service: switch.turn_off
+      entity_id: switch.downstairs_hallway_light
+
+##############################################################
+- alias: Garage Door Opened Garage Light
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door
+      to: 'on'
+    - platform: state
+      entity_id: cover.large_garage_door
+      to: 'open'
+    - platform: state
+      entity_id: cover.small_garage_door
+      to: 'open'
+
+  condition:
+    - condition: and
+      conditions:
+        - condition: state
+          entity_id: switch.garage_light
+          state: 'off'
+        # After Dark or Cloudy
+        - condition: or
+          conditions:
+            - condition: sun
+              after: sunset
+            - condition: sun
+              before: sunrise
+            - condition: numeric_state
+              entity_id: sensor.dark_sky_cloud_coverage
+              above: 80
+
+  action:
+    - service: switch.turn_on
+      entity_id: switch.garage_light
+
+##############################################################
+- alias: Garage Door Closed Garage Light
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door
+      to: 'off'
+      for:
+        seconds: 30
+    - platform: state
+      entity_id: cover.large_garage_door
+      to: 'closed'
+      for:
+        seconds: 30
+    - platform: state
+      entity_id: cover.small_garage_door
+      to: 'closed'
+      for:
+        seconds: 30
+
+  condition:
+    - condition: state
+      entity_id: binary_sensor.garage_door
+      state: 'off'
+    - condition: state
+      entity_id: cover.large_garage_door
+      state: 'closed'
+    - condition: state
+      entity_id: cover.small_garage_door
+      state: 'closed'
+    - condition: state
+      entity_id: switch.garage_light
+      state: 'on'
+
+  action:
+    - service: switch.turn_off
+      entity_id: switch.garage_light

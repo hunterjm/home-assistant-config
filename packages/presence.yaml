@@ -1,0 +1,48 @@
+# UniFi Controller
+device_tracker:
+  - platform: unifi
+    host: !secret full_domain
+    username: hass
+    password: !secret hass_user_pass
+    ssid_filter:
+      - !secret ssid
+      - !secret ssid_guest
+
+group:
+  USER1_presence:
+    entities:
+      - device_tracker.USER1s_iphone
+      - device_tracker.USER1s_iphone_wifi
+  USER2_presence:
+    entities:
+      - device_tracker.USER2s_iphone
+      - device_tracker.USER2s_iphone_wifi
+  family_presence:
+    entities:
+      - device_tracker.USER1s_iphone
+      - device_tracker.USER1s_iphone_wifi
+      - device_tracker.USER2s_iphone
+      - device_tracker.USER2s_iphone_wifi
+      
+sensor:
+  - platform: template
+    sensors:
+      USER1_presence:
+        value_template: >
+          {% if is_state('group.USER1_presence', 'home') %}
+            Home
+          {% elif is_state('device_tracker.USER1s_iphone', 'not_home') %}
+            Away
+          {% else %}
+            {{ states('device_tracker.USER1s_iphone') }}
+          {% endif %}
+      USER2_presence:
+        value_template: >
+          {% if is_state('group.USER2_presence', 'home') %}
+            Home
+          {% elif is_state('device_tracker.USER2s_iphone', 'not_home') %}
+            Away
+          {% else %}
+            {{ states('device_tracker.USER2s_iphone') }}
+          {% endif %}
+    

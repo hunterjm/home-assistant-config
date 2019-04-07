@@ -1,0 +1,43 @@
+title: Security
+path: security
+icon: mdi:shield-home
+cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:vertical-stack-in-card
+        cards:
+          - type: entities
+            entities:
+              - entity: input_boolean.show_security
+                name: Show Security Status
+                icon: mdi:shield-home
+              - entity: input_boolean.voice_alerts
+                name: Voice Alerts
+                icon: mdi:amazon-alexa
+          - type: alarm-panel
+            entity: alarm_control_panel.alarm
+            # title: Alarm
+            # style: '--alarm-color-disarmed: var(--label-badge-blue);'
+            states:
+              - arm_home
+              - arm_away
+          - type: conditional
+            conditions:
+              - entity: input_boolean.show_security
+                state: "on"
+            card:
+              type: custom:monster-card
+              show_empty: false
+              card:
+                type: entities
+              filter:
+                include:
+                  - entity_id: "binary_sensor.*_door"
+                    options:
+                      secondary_info: last-changed
+                  - entity_id: "binary_sensor.*_field_detection"
+                    options:
+                      secondary_info: last-changed
+                  - entity_id: "binary_sensor.*_line_crossing"
+                    options:
+                      secondary_info: last-changed
