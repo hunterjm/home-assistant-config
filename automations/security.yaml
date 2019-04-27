@@ -36,10 +36,10 @@
           value_template: "{{ not is_state('group.family_presence', 'home') }}"
         - condition: template
           value_template: >
-            {% for s in ['garage', 'foyer'] if s in 'image_processing.tensorflow_garage' %}
-              True
-            {% else %}
+            {% for s in ['garage', 'foyer'] if s in trigger.entity_id %}
               False
+            {% else %}
+              True
             {% endfor %}
     - service: notify.ios_jk_phones
       data_template:

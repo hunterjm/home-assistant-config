@@ -82,6 +82,20 @@ image_processing:
       categories:
         - person
         - car
+  # - platform: tensorflow
+  #   confidence: 90
+  #   scan_interval: 10000
+  #   source:
+  #     - entity_id: camera.garage
+  #     - entity_id: camera.foyer
+  #     - entity_id: camera.backyard
+  #     - entity_id: camera.driveway
+  #   file_out:
+  #     - "/config/www/motion/{{ camera_entity.split('.')[1] }}_custom_latest.jpg"
+  #     - "/share/camera/{{ camera_entity.split('.')[1] }}_{{ now().strftime('%Y%m%d_%H%M%S') }}_custom.jpg"
+  #   model:
+  #     graph: /config/tensorflow/graph/rocky_gap_2019_04_18/frozen_inference_graph.pb
+  #     labels: /config/tensorflow/graph/rocky_gap_2019_04_18/label_map.pbtxt
 
 input_boolean:
   voice_alerts:

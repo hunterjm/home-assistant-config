@@ -8,6 +8,16 @@
     data:
       addon: core_letsencrypt
 
+- id: nginx-restart
+  alias: "Restart Nginx"
+  trigger:
+  - platform: time
+    at: '00:00:00'
+  action:
+  - service: hassio.addon_restart
+    data:
+      addon: core_nginx_proxy
+
 - id: homekit-start
   alias: "Start HomeKit"
   trigger:
